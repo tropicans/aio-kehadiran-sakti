@@ -284,8 +284,8 @@ const AbsensiForm = () => {
         <section className="py-16 bg-gray-50">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 animate-fade-in">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4 font-poppins">Form Absensi</h2>
-                    <p className="text-gray-600 font-poppins">Pilih kategori absensi sesuai status Anda</p>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4 font-poppins">Form Presensi</h2>
+                    <p className="text-gray-600 font-poppins">Pilih kategori presensi sesuai status Anda</p>
 
                     <div className="flex items-center justify-center space-x-6 mt-6 text-sm text-gray-600">
                         <div className="flex items-center space-x-2">

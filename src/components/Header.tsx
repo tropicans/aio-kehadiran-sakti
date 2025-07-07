@@ -11,11 +11,11 @@ const Header = () => {
               <Clock className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-primary font-poppins">AIO ABSENSI</h1>
-              <p className="text-xs text-gray-600 font-poppins">Sistem Absensi Modern</p>
+              <h1 className="text-xl font-bold text-primary font-poppins">attenda</h1>
+              <p className="text-xs text-gray-600 font-poppins">One Tap to Be Counted</p>
             </div>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
               <Users className="h-4 w-4" />
