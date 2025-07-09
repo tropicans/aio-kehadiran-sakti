@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import DailyActivityInputPage from "./pages/DailyActivityInputPage";
+import LoginPage from "./pages/LoginPage"; // Import LoginPage yang baru
+import ProtectedRoute from "./components/Auth/ProtectedRoute"; // Import ProtectedRoute yang baru
+import UserManagementPage from "./pages/UserManagementPage"; // Import UserManagementPage yang baru
 
 const queryClient = new QueryClient();
 
@@ -17,7 +20,23 @@ const App = () => (
       <BrowserRouter> {/* HANYA ADA SATU BROWSERROUTER */}
         <Routes> {/* HANYA ADA SATU ROUTES */}
           <Route path="/" element={<Index />} />
-          <Route path="/admin/activities" element={<DailyActivityInputPage />} /> {/* Route admin di sini */}
+          <Route path="/login" element={<LoginPage />} /> {/* Rute untuk halaman login */}
+          <Route
+            path="/admin/activities"
+            element={
+              <ProtectedRoute>
+                <DailyActivityInputPage />
+              </ProtectedRoute>
+            }
+          /> {/* Halaman admin yang dilindungi */}
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute>
+                <UserManagementPage />
+              </ProtectedRoute>
+            }
+          /> {/* Halaman manajemen pengguna yang dilindungi */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -6,9 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
-const DailyActivityForm = () => {
+interface DailyActivityFormProps {
+  onActivityAdded: () => void; // Tambahkan prop ini
+}
+
+const DailyActivityForm: React.FC<DailyActivityFormProps> = ({ onActivityAdded }) => {
   const [activityName, setActivityName] = useState('');
-  // Hapus state description
   const [activityDate, setActivityDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -29,7 +32,6 @@ const DailyActivityForm = () => {
 
     const payload = {
       activity_name: activityName,
-      // Hapus description dari payload
       activity_date: activityDate,
     };
 
@@ -50,8 +52,8 @@ const DailyActivityForm = () => {
           description: `Kegiatan "${activityName}" telah tersimpan.`,
         });
         setActivityName('');
-        // Hapus set description
         setActivityDate('');
+        onActivityAdded(); // Panggil callback setelah berhasil menambahkan kegiatan
       } else {
         toast({
           title: "Gagal Menambahkan Kegiatan",
@@ -95,7 +97,6 @@ const DailyActivityForm = () => {
                   className="font-poppins"
                 />
               </div>
-              {/* Hapus div untuk deskripsi kegiatan */}
               <div className="space-y-2">
                 <Label htmlFor="activityDate" className="font-poppins font-medium">Tanggal Kegiatan *</Label>
                 <Input
