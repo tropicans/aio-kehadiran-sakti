@@ -15,12 +15,16 @@ interface InternalEmployeeFormProps {
   nipError: string;
   debouncedFetchEmployeeData: (nip: string) => void;
   nipInputRef: React.RefObject<HTMLInputElement>;
-  dailyActivities: { id: number; activity_name: string }[];
-  isLoadingActivities: boolean;
-  selectedActivityTypeInternal: string;
-  setSelectedActivityTypeInternal: (type: string) => void;
-  otherActivityNameInternal: string;
-  setOtherActivityNameInternal: (name: string) => void;
+  
+  // Props baru untuk kategori dan nama kegiatan
+  activityCategories: { [key: string]: string[] }; // Objek kategori statis
+  selectedMainCategory: string;
+  setSelectedMainCategory: (category: string) => void;
+  selectedSubCategory: string;
+  setSelectedSubCategory: (subCategory: string) => void;
+  activityDetailName: string;
+  setActivityDetailName: (name: string) => void;
+
   isSubmitting: boolean;
 }
 
@@ -35,12 +39,13 @@ const InternalEmployeeForm: React.FC<InternalEmployeeFormProps> = ({
   nipError,
   debouncedFetchEmployeeData,
   nipInputRef,
-  dailyActivities,
-  isLoadingActivities,
-  selectedActivityTypeInternal,
-  setSelectedActivityTypeInternal,
-  otherActivityNameInternal,
-  setOtherActivityNameInternal,
+  activityCategories, // Destrukturisasi props baru
+  selectedMainCategory,
+  setSelectedMainCategory,
+  selectedSubCategory,
+  setSelectedSubCategory,
+  activityDetailName,
+  setActivityDetailName,
   isSubmitting,
 }) => {
   return (
@@ -104,49 +109,72 @@ const InternalEmployeeForm: React.FC<InternalEmployeeFormProps> = ({
           </Select>
         </div>
 
+        {/* Dropdown Kategori Utama */}
         <div className="space-y-2">
-          <Label htmlFor="jenis-kegiatan-internal" className="font-poppins font-medium">Jenis Kegiatan *</Label>
-          <Select
-            required
-            name="jenis-kegiatan-internal"
-            disabled={isSubmitting || isLoadingActivities}
-            value={selectedActivityTypeInternal}
-            onValueChange={setSelectedActivityTypeInternal}
-          >
-            <SelectTrigger className="font-poppins" type="button">
-              <SelectValue placeholder={isLoadingActivities ? "Memuat kegiatan..." : "Pilih jenis kegiatan"} />
-            </SelectTrigger>
-            <SelectContent>
-              {dailyActivities.length > 0 ? (
-                dailyActivities.map(activity => (
-                  <SelectItem key={activity.id} value={activity.activity_name}>
-                    {activity.activity_name}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="no-activities" disabled>Tidak ada kegiatan hari ini</SelectItem>
-              )}
-              <SelectItem value="Lainnya (diluar jadwal)">Lainnya (diluar jadwal)</SelectItem>
-            </SelectContent>
-          </Select>
+            <Label htmlFor="mainCategory" className="font-poppins font-medium">Kategori Utama *</Label>
+            <Select
+                required
+                name="mainCategory"
+                value={selectedMainCategory}
+                onValueChange={(value) => {
+                    setSelectedMainCategory(value);
+                    setSelectedSubCategory(''); // Reset sub-kategori saat kategori utama berubah
+                }}
+                disabled={isSubmitting}
+            >
+                <SelectTrigger className="font-poppins" type="button">
+                    <SelectValue placeholder="Pilih kategori utama" />
+                </SelectTrigger>
+                <SelectContent>
+                    {Object.keys(activityCategories).map(category => (
+                        <SelectItem key={category} value={category}>
+                            {category}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
       </div>
 
-      {selectedActivityTypeInternal === 'Lainnya (diluar jadwal)' && (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Dropdown Sub Kategori Kegiatan (tergantung Kategori Utama) */}
         <div className="space-y-2">
-          <Label htmlFor="otherActivityNameInternal" className="font-poppins font-medium">Nama Rapat *</Label>
-          <Input
-            id="otherActivityNameInternal"
-            placeholder="Masukkan nama rapat"
-            required
-            value={otherActivityNameInternal}
-            onChange={(e) => setOtherActivityNameInternal(e.target.value)}
-            disabled={isSubmitting}
-            className="font-poppins"
-            name="otherActivityNameInternal"
-          />
+            <Label htmlFor="subCategory" className="font-poppins font-medium">Sub Kategori Kegiatan *</Label>
+            <Select
+                required
+                name="subCategory"
+                value={selectedSubCategory}
+                onValueChange={setSelectedSubCategory}
+                disabled={isSubmitting || !selectedMainCategory} // Disable jika kategori utama belum dipilih
+            >
+                <SelectTrigger className="font-poppins" type="button">
+                    <SelectValue placeholder="Pilih sub kategori" />
+                </SelectTrigger>
+                <SelectContent>
+                    {selectedMainCategory && activityCategories[selectedMainCategory].map(subCat => (
+                        <SelectItem key={subCat} value={subCat}>
+                            {subCat}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
-      )}
+
+        {/* Input Nama Kegiatan Spesifik */}
+        <div className="space-y-2">
+            <Label htmlFor="activityDetailName" className="font-poppins font-medium">Nama Kegiatan *</Label>
+            <Input
+                id="activityDetailName"
+                placeholder="Contoh: Rapat Koordinasi Mingguan Divisi A"
+                required
+                value={activityDetailName}
+                onChange={(e) => setActivityDetailName(e.target.value)}
+                disabled={isSubmitting}
+                className="font-poppins"
+                name="activityDetailName"
+            />
+        </div>
+      </div>
     </div>
   );
 };

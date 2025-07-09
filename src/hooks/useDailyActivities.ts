@@ -11,6 +11,7 @@ interface DailyActivity {
 export const useDailyActivities = () => {
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
   const [isLoadingActivities, setIsLoadingActivities] = useState(false);
+  const [activityNameFromUrl, setActivityNameFromUrl] = useState<string>(''); // State baru untuk activityName dari URL
   const { toast } = useToast();
   const location = useLocation();
 
@@ -23,14 +24,14 @@ export const useDailyActivities = () => {
       if (response.ok) {
         let activities: DailyActivity[] = data;
         const queryParams = new URLSearchParams(location.search);
-        const activityNameFromUrl = queryParams.get('activityName');
+        const nameFromUrl = queryParams.get('activityName'); // Gunakan variabel lokal
 
-        if (activityNameFromUrl && !activities.some(act => act.activity_name === activityNameFromUrl)) {
-          activities = [...activities, { id: 0, activity_name: activityNameFromUrl }];
-          toast({
-            title: "Data Kegiatan Terisi Otomatis",
-            description: "Jenis kegiatan dan tanggal presensi telah terisi dari QR Code.",
-          });
+        if (nameFromUrl) { // Simpan nilai dari URL ke state baru
+          setActivityNameFromUrl(nameFromUrl);
+          if (!activities.some(act => act.activity_name === nameFromUrl)) {
+            activities = [...activities, { id: 0, activity_name: nameFromUrl }];
+            // Toast ini sudah dipindahkan ke AbsensiForm untuk menghindari duplikasi
+          }
         }
         setDailyActivities(activities);
       } else {
@@ -59,6 +60,7 @@ export const useDailyActivities = () => {
   return {
     dailyActivities,
     isLoadingActivities,
-    fetchDailyActivities // Allow re-fetching if needed, e.g., after adding a new activity
+    activityNameFromUrl, // KEMBALIKAN activityNameFromUrl DI SINI
+    fetchDailyActivities
   };
 };
